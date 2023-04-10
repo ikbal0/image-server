@@ -10,6 +10,7 @@ func StartApp() *gin.Engine {
 	r := gin.Default()
 
 	r.MaxMultipartMemory = 8 << 20
+	r.Static("/image", "./image")
 	r.POST("/image", controllers.UploadImage)
 
 	return r
