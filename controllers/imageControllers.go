@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +12,7 @@ import (
 
 func UploadImage(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
+	name := ctx.PostForm("name")
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -29,7 +29,9 @@ func UploadImage(ctx *gin.Context) {
 		return
 	}
 
-	ctx.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	ctx.JSON(http.StatusOK, gin.H{
+		"name": name,
+	})
 }
 
 // func UploadImage(w http.ResponseWriter, r *http.Request) {

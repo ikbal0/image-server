@@ -3,7 +3,7 @@ package main
 import "image-server/routers"
 
 func main() {
-	var PORT = "8080"
+	var PORT = "3000"
 	r := routers.StartApp()
 	defer r.Run(":" + PORT)
 
