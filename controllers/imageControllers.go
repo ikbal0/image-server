@@ -13,6 +13,7 @@ import (
 func UploadImage(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	name := ctx.PostForm("name")
+	userId := ctx.PostForm("userId")
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -30,7 +31,9 @@ func UploadImage(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"name": name,
+		"name":   name,
+		"userId": userId,
+		"file":   file,
 	})
 }
 
