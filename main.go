@@ -1,9 +1,13 @@
 package main
 
-import "image-server/routers"
+import (
+	"image-server/infrastructures/database"
+	"image-server/internals/protocols/http/routers"
+)
 
 func main() {
 	var PORT = "3000"
+	database.StartDB()
 	r := routers.StartApp()
 	defer r.Run(":" + PORT)
 

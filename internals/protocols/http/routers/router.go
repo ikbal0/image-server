@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"image-server/controllers"
+	handler "image-server/src/handlers/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +11,9 @@ func StartApp() *gin.Engine {
 
 	r.MaxMultipartMemory = 8 << 20
 	r.Static("/image", "./image")
-	r.POST("/image", controllers.UploadImage)
+	r.POST("/image", handler.UploadImage)
+	r.DELETE("/image/:imageId", handler.DeleteImage)
+	r.PATCH("/image/:imageId", handler.UpdateImage)
 
 	return r
 }
