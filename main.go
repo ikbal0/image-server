@@ -1,7 +1,7 @@
 package main
 
 import (
-	"image-server/infrastructures/database"
+	"image-server/database"
 	"image-server/internals/protocols/http/routers"
 )
 
