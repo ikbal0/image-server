@@ -12,8 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UpdateImage(ctx *gin.Context) {
-	var db = database.GetDB()
+func (h HttpHandlerImpl) UpdateImageHandler(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -23,29 +22,48 @@ func UpdateImage(ctx *gin.Context) {
 		return
 	}
 
-	var image entities.Image
+	getId := ctx.Param("imageId")
+	id, err := strconv.Atoi(getId)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to convert string to int",
+		})
+		return
+	}
 
-	if err := db.First(&image, "Id = ?", ctx.Param("imageId")).Error; err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "record has not found!"})
+	image, err := h.ImageByID(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
 		return
 	}
 
 	imageName := image.Name
-	if err := ctx.SaveUploadedFile(file, "image/"+imageName); err != nil {
+	if err := ctx.SaveUploadedFile(file, "uploads/image/"+imageName); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"message": "Unable to save file",
 		})
 		return
 	}
 
-	var input entities.Image
-	input.Name = imageName
+	imageRequestBody := dto.ImageRequestBody{
+		Name: imageName,
+	}
 
-	ctx.ShouldBindJSON(&input)
+	updatedImage, err := h.UpdateImage(imageRequestBody)
 
-	db.Model(&image).Updates(&input)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": image})
+	ctx.JSON(http.StatusOK, gin.H{"data": updatedImage})
 }
 
 func DeleteImage(ctx *gin.Context) {
@@ -75,67 +93,7 @@ func DeleteImage(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "image deleted!"})
 }
 
-func UploadImage(ctx *gin.Context) {
-	db := database.GetDB()
-	Image := entities.Image{}
-
-	file, err := ctx.FormFile("file")
-	// name := ctx.PostForm("name")
-	userId := ctx.PostForm("userId")
-
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "No File is received",
-			"err":     err.Error(),
-		})
-		return
-	}
-
-	timeStamp := utils.MakeTimeStamp()
-	newName := strconv.Itoa(int(timeStamp)) + file.Filename
-
-	// if err := ctx.SaveUploadedFile(file, "image/"+name); err != nil {
-	if err := ctx.SaveUploadedFile(file, "image/"+newName); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": "Unable to save file",
-		})
-		return
-	}
-
-	num, errConv := strconv.Atoi(userId)
-
-	if errConv != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": "Unable to convert data",
-		})
-		return
-	}
-
-	Image.UserID = uint(num)
-	// Image.Name = name
-	Image.Name = newName
-	// Image.ImageUrl = "http://localhost:3000/image/" + name
-	Image.ImageUrl = "http://localhost:3000/image/" + newName
-
-	errCreate := db.Debug().Create(&Image).Error
-
-	if errCreate != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Bad Request",
-			"message": err.Error(),
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		// "name":      name,
-		"image_id":  Image.ID,
-		"user_id":   Image.UserID,
-		"image_url": Image.ImageUrl,
-	})
-}
-
-func (h HttpHandlerImpl) UploadImageVer2(ctx *gin.Context) {
+func (h HttpHandlerImpl) UploadImageHandler(ctx *gin.Context) {
 	userId := ctx.PostForm("userId")
 	num, errConv := strconv.Atoi(userId)
 

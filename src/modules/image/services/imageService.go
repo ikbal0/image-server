@@ -6,10 +6,6 @@ import (
 	"image-server/src/modules/image/repositories"
 )
 
-type ImageService interface {
-	InsertImage(data dto.ImageRequestBody) (entities.Image, error)
-}
-
 type service struct {
 	repository repositories.RepositoryImageCommand
 }
@@ -18,6 +14,28 @@ func NewService(repository repositories.RepositoryImageCommand) *service {
 	service := &service{repository}
 
 	return service
+}
+
+type ImageService interface {
+	InsertImage(data dto.ImageRequestBody) (entities.Image, error)
+	UpdateImage(data dto.ImageRequestBody) (entities.Image, error)
+	ImageByID(ID int) (entities.Image, error)
+}
+
+func (s service) ImageByID(ID int) (entities.Image, error) {
+	image, err := s.repository.ImageByID(ID)
+
+	return image, err
+}
+
+func (s service) UpdateImage(data dto.ImageRequestBody) (entities.Image, error) {
+	image := entities.Image{
+		Name: data.Name,
+	}
+
+	newImage, err := s.repository.UpdateImage(image)
+
+	return newImage, err
 }
 
 func (s service) InsertImage(data dto.ImageRequestBody) (entities.Image, error) {
@@ -29,9 +47,5 @@ func (s service) InsertImage(data dto.ImageRequestBody) (entities.Image, error) 
 
 	newImage, err := s.repository.InsertImage(image)
 
-	if err != nil {
-		return newImage, err
-	}
-
-	return newImage, nil
+	return newImage, err
 }
