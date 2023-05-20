@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"image-server/src/modules/image/entities"
 
 	"gorm.io/gorm"
@@ -32,10 +33,13 @@ func (r *repository) ImageByID(ID int) (entities.Image, error) {
 func (r *repository) UpdateImage(Image entities.Image) (entities.Image, error) {
 	var input entities.Image
 
-	imageName := Image.Name
-	input.Name = imageName
+	input.Name = Image.Name
+	input.ImageUrl = Image.ImageUrl
+	input.UserID = Image.UserID
 
 	r.db.Model(&Image).Updates(&input)
+
+	fmt.Println(input.Name, input.ImageUrl, input.UserID)
 
 	return Image, nil
 }

@@ -30,7 +30,9 @@ func (s service) ImageByID(ID int) (entities.Image, error) {
 
 func (s service) UpdateImage(data dto.ImageRequestBody) (entities.Image, error) {
 	image := entities.Image{
-		Name: data.Name,
+		Name:     data.Name,
+		ImageUrl: data.ImageUrl,
+		UserID:   data.UserID,
 	}
 
 	newImage, err := s.repository.UpdateImage(image)

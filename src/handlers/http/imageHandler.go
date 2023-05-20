@@ -50,7 +50,9 @@ func (h HttpHandlerImpl) UpdateImageHandler(ctx *gin.Context) {
 	}
 
 	imageRequestBody := dto.ImageRequestBody{
-		Name: imageName,
+		Name:     imageName,
+		ImageUrl: image.ImageUrl,
+		UserID:   image.UserID,
 	}
 
 	updatedImage, err := h.UpdateImage(imageRequestBody)
