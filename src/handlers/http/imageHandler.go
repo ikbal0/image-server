@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"image-server/database"
 	"image-server/internals/utils"
 	"image-server/src/modules/image/dto"
-	"image-server/src/modules/image/entities"
 	"net/http"
 	"os"
 	"strconv"
@@ -68,29 +66,35 @@ func (h HttpHandlerImpl) UpdateImageHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": updatedImage})
 }
 
-func DeleteImage(ctx *gin.Context) {
-	db := database.GetDB()
-	imageDelete := entities.Image{}
-	imageId, _ := strconv.Atoi(ctx.Param("imageId"))
-
-	err := db.First(&imageDelete, "Id = ?", imageId).Error
-
+func (h HttpHandlerImpl) DeleteImageHandler(ctx *gin.Context) {
+	getId := ctx.Param("imageId")
+	id, err := strconv.Atoi(getId)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "record has not found!"})
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to convert string to int",
+		})
 		return
 	}
 
-	errRemove := os.Remove("image/" + imageDelete.Name)
+	image, err := h.ImageByID(id)
 
-	if errRemove != nil {
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error":   errRemove.Error(),
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if err := os.Remove("uploads/image/" + image.Name); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
 			"message": "file has not found!",
 		})
 		return
 	}
 
-	db.Delete(&imageDelete)
+	h.Delete(id)
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "image deleted!"})
 }

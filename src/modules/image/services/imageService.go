@@ -19,7 +19,20 @@ func NewService(repository repositories.RepositoryImageCommand) *service {
 type ImageService interface {
 	InsertImage(data dto.ImageRequestBody) (entities.Image, error)
 	UpdateImage(data dto.ImageRequestBody) (entities.Image, error)
+	Delete(ID int) error
 	ImageByID(ID int) (entities.Image, error)
+}
+
+func (s service) Delete(ID int) error {
+	image, err := s.repository.ImageByID(ID)
+
+	if err != nil {
+		return err
+	}
+
+	errDel := s.repository.Delete(image)
+
+	return errDel
 }
 
 func (s service) ImageByID(ID int) (entities.Image, error) {

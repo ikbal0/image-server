@@ -18,8 +18,9 @@ func NewRepository(db *gorm.DB) *repository {
 
 type RepositoryImageCommand interface {
 	InsertImage(Image entities.Image) (entities.Image, error)
-	ImageByID(ID int) (entities.Image, error)
 	UpdateImage(Image entities.Image) (entities.Image, error)
+	Delete(Image entities.Image) error
+	ImageByID(ID int) (entities.Image, error)
 }
 
 func (r *repository) ImageByID(ID int) (entities.Image, error) {
@@ -28,6 +29,12 @@ func (r *repository) ImageByID(ID int) (entities.Image, error) {
 		return image, err
 	}
 	return image, nil
+}
+
+func (r *repository) Delete(Image entities.Image) error {
+	err := r.db.Debug().Delete(Image).Error
+
+	return err
 }
 
 func (r *repository) UpdateImage(Image entities.Image) (entities.Image, error) {
@@ -47,9 +54,5 @@ func (r *repository) UpdateImage(Image entities.Image) (entities.Image, error) {
 func (r *repository) InsertImage(Image entities.Image) (entities.Image, error) {
 	err := r.db.Debug().Create(&Image).Error
 
-	if err != nil {
-		return Image, err
-	}
-
-	return Image, nil
+	return Image, err
 }
