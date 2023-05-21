@@ -3,18 +3,7 @@ package services
 import (
 	"image-server/src/modules/image/dto"
 	"image-server/src/modules/image/entities"
-	"image-server/src/modules/image/repositories"
 )
-
-type service struct {
-	repository repositories.RepositoryImageCommand
-}
-
-func NewService(repository repositories.RepositoryImageCommand) *service {
-	service := &service{repository}
-
-	return service
-}
 
 type ImageService interface {
 	InsertImage(data dto.ImageRequestBody) (entities.Image, error)

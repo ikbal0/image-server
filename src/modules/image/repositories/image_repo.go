@@ -3,18 +3,7 @@ package repositories
 import (
 	"fmt"
 	"image-server/src/modules/image/entities"
-
-	"gorm.io/gorm"
 )
-
-type repository struct {
-	db *gorm.DB
-}
-
-func NewRepository(db *gorm.DB) *repository {
-	tx := &repository{db: db}
-	return tx
-}
 
 type RepositoryImageCommand interface {
 	InsertImage(Image entities.Image) (entities.Image, error)
