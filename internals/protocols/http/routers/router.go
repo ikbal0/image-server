@@ -19,7 +19,7 @@ func StartApp() *gin.Engine {
 
 	r.MaxMultipartMemory = 8 << 20
 	r.Static("/image", "./uploads/image")
-	r.POST("/imageUp", imageHandler.UploadImageHandler)
+	r.POST("/image", imageHandler.UploadImageHandler)
 	r.DELETE("/image/:imageId", imageHandler.DeleteImageHandler)
 	r.PUT("/image/:imageId", imageHandler.UpdateImageHandler)
 
