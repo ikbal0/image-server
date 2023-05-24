@@ -21,7 +21,7 @@ func StartApp() *gin.Engine {
 	r.Static("/image", "./uploads/image")
 	r.POST("/image", imageHandler.UploadImageHandler)
 	r.DELETE("/image/:imageId", imageHandler.DeleteImageHandler)
-	r.PUT("/image/:imageId", imageHandler.UpdateImageHandler)
+	r.PATCH("/image/:imageId", imageHandler.UpdateImageHandler)
 
 	return r
 }
