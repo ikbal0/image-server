@@ -6,7 +6,7 @@ import (
 
 type RepositoryImageCommand interface {
 	InsertImage(Image entities.Image) (entities.Image, error)
-	UpdateImage(Image entities.Image) (entities.Image, error)
+	UpdateImage(ID int, Image entities.Image) (entities.Image, error)
 	Delete(Image entities.Image) error
 	ImageByID(ID int) (entities.Image, error)
 }
@@ -25,18 +25,18 @@ func (r *repository) Delete(Image entities.Image) error {
 	return err
 }
 
-func (r *repository) UpdateImage(Image entities.Image) (entities.Image, error) {
+func (r *repository) UpdateImage(ID int, Image entities.Image) (entities.Image, error) {
 	var input entities.Image
 
 	input.Name = Image.Name
 	input.ImageUrl = Image.ImageUrl
 	input.UserID = Image.UserID
 
-	r.db.Model(&Image).Updates(&input)
+	err := r.db.Debug().Model(&Image).Where("Id = ?", ID).Updates(&input).Error
 
 	// fmt.Println(input.Name, input.ImageUrl, input.UserID)
 
-	return Image, nil
+	return Image, err
 }
 
 func (r *repository) InsertImage(Image entities.Image) (entities.Image, error) {

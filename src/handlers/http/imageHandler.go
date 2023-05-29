@@ -53,7 +53,7 @@ func (h HttpHandlerImpl) UpdateImageHandler(ctx *gin.Context) {
 		UserID:   image.UserID,
 	}
 
-	updatedImage, err := h.UpdateImage(imageRequestBody)
+	updatedImage, err := h.UpdateImage(id, imageRequestBody)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{

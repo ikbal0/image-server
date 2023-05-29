@@ -7,7 +7,7 @@ import (
 
 type ImageService interface {
 	InsertImage(data dto.ImageRequestBody) (entities.Image, error)
-	UpdateImage(data dto.ImageRequestBody) (entities.Image, error)
+	UpdateImage(ID int, data dto.ImageRequestBody) (entities.Image, error)
 	Delete(ID int) error
 	ImageByID(ID int) (entities.Image, error)
 }
@@ -30,14 +30,14 @@ func (s service) ImageByID(ID int) (entities.Image, error) {
 	return image, err
 }
 
-func (s service) UpdateImage(data dto.ImageRequestBody) (entities.Image, error) {
+func (s service) UpdateImage(ID int, data dto.ImageRequestBody) (entities.Image, error) {
 	image := entities.Image{
 		Name:     data.Name,
 		ImageUrl: data.ImageUrl,
 		UserID:   data.UserID,
 	}
 
-	newImage, err := s.repository.UpdateImage(image)
+	newImage, err := s.repository.UpdateImage(ID, image)
 
 	return newImage, err
 }
