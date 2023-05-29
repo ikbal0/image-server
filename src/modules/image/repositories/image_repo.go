@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"image-server/src/modules/image/entities"
 )
 
@@ -35,7 +34,7 @@ func (r *repository) UpdateImage(Image entities.Image) (entities.Image, error) {
 
 	r.db.Model(&Image).Updates(&input)
 
-	fmt.Println(input.Name, input.ImageUrl, input.UserID)
+	// fmt.Println(input.Name, input.ImageUrl, input.UserID)
 
 	return Image, nil
 }
